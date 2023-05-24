@@ -63,7 +63,7 @@ FROM Customer c
 WHERE c.cID NOT IN (
 SELECT c.cID 
 FROM Customer c, Purchase p
-WHERE c.cID = p.customer)
+WHERE c.cID = p.customer);
 
 -- b) Which product is most expensive? Show product ID, name and price.
 select p.pID, p.name, p.price
@@ -71,23 +71,26 @@ FROM Product p
 WHERE p.price = (
 SELECT MAX(price)
 FROM Product
-  )
+  );
 
 -- c) Which products have the highest total quantity purchased? Show the product name and the number purchased.
 SELECT product, SUM(quantity)
 FROM Purchase_Detail
 GROUP BY Product
-HAVING SUM(quantity) >= (
-  	SELECT SUM(quantity)
+HAVING SUM(quantity) >= ( 
+  SELECT MAX(total) 
+  FROM (
+  	SELECT SUM(quantity) as total 
 	FROM Purchase_Detail
 	GROUP BY Product
+    )
   )
 
 —-- d) Calculate the total amount of each purchase (the total amount column currently has no value). Show purchase ID and total amount.
 SELECT pd.purchase, pd.quantity * p.price as total_amount
 from Purchase_Detail pd, Product p
 WHERE pd.product = p.pID
-GROUP by pd.purchase
+GROUP by pd.purchase;
 
 —-- e) Find the products that haven’t been purchased since 2023-06-01. Show the product ID and name.
 SELECT p.pID, p.name
@@ -95,7 +98,7 @@ FROM Purchase pc, Purchase_Detail pcd, Product p
 WHERE pc.purchaseID = pcd.purchase 
 and pcd.product = p.pID
 AND pc.date >= "2023-06-01"
-GROUP By pc.purchaseid
+GROUP By pc.purchaseid;
 
 -- f) Find the total sale of November 2023.
 SELECT SUM(total_amount)
@@ -106,12 +109,12 @@ WHERE pc.purchaseID = pcd.purchase
 	And pcd.product = p.pID
     ANd pc.date >= "2023-11-01"
 GROUP By pc.purchaseID
-  )
+  );
 
 -- g) Find the average price of each product type. Show product type and average price
 SELECT type, AVG(price)
 FROM Product 
-GROUP By type
+GROUP By type;
 
 -- h) Show the product type that has average price less than average price of all product
 SELECT type, AVG(price)
@@ -120,4 +123,4 @@ GROUP By type
 HAVING AVG(price) <= (
   SELECT AVG(price)
 	FROM Product 
-  )
+  );
