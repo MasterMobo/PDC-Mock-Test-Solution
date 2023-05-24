@@ -1,0 +1,20 @@
+Functional Dependencies:
+	Partial dependencies:
+		ProjectID -> ProjectName
+		EmployeeID -> EmployeeName, Position, Hour salary
+	Full dependencies:
+		ProjectID, EmployeeID -> Hours
+	Transitive dependencies:
+		EmployeeName -> Position, Hour salary
+Candidate keys: ProjectID, EmployeeID, EmployeeName
+
+1NF: fill in missing data
+2NF: Remove partial dependencies:
+	Project (ProjectID, projectName)
+	Employee (EmployeeID, EmployeeName, Position, HourSalary)
+	Assignment (ProjectID, EmployeeID, Hours)
+3NF: Remove transitive dependencies:
+	Project (ProjectID, projectName)
+	Employee (EmployeeID, EmployeeName)
+	Position (EmployeeName, Position, HourSalary)
+	Assignment (ProjectID, EmployeeID, Hours)
