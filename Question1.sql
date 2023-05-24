@@ -102,14 +102,14 @@ GROUP By pc.purchaseid;
 
 -- f) Find the total sale of November 2023.
 SELECT SUM(total_amount)
-FROM (
-SELECT pcd.quantity * p.price as total_amount
-FROM Purchase pc, Purchase_Detail pcd, Product p
-WHERE pc.purchaseID = pcd.purchase
-	And pcd.product = p.pID
-    ANd pc.date >= "2023-11-01"
-GROUP By pc.purchaseID
-  );
+from (
+  SELECT pcd.quantity * p.price as total
+  FROM Purchase pc, Purchase_Detail pcd, Product p
+  WHERE pc.purchaseID = pcd.purchase
+      AND pcd.product = p.pID
+      AND pc.date BETWEEN "2023-11-01" AND "2023-11-30"
+  GROUP by pc.purchaseID
+  )
 
 -- g) Find the average price of each product type. Show product type and average price
 SELECT type, AVG(price)
@@ -120,7 +120,7 @@ GROUP By type;
 SELECT type, AVG(price)
 FROM Product 
 GROUP By type
-HAVING AVG(price) <= (
+HAVING AVG(price) < (
   SELECT AVG(price)
 	FROM Product 
   );
