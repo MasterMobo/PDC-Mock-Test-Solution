@@ -74,36 +74,37 @@ FROM Product
   );
 
 -- c) Which products have the highest total quantity purchased? Show the product name and the number purchased.
-SELECT product, SUM(quantity)
-FROM Purchase_Detail
-GROUP BY Product
-HAVING SUM(quantity) >= ( 
-  SELECT MAX(total) 
-  FROM (
-  	SELECT SUM(quantity) as total 
-	FROM Purchase_Detail
-	GROUP BY Product
-    )
+SELECT p.name, SUM(pcd.quantity)
+FROM Purchase_Detail pcd, Product p
+WHERE pcd.product = p.pid
+GROUP BY pcd.product
+HAVING SUM(pcd.quantity) = (
+SELECT MAX(total_quantity.total)
+FROM (
+  	SELECT SUM(pcd.quantity) as total 
+	FROM Purchase_Detail pcd
+	GROUP BY pcd.product
+   ) total_quantity
   )
 
-—-- d) Calculate the total amount of each purchase (the total amount column currently has no value). Show purchase ID and total amount.
+
+
+-- d) Calculate the total amount of each purchase (the total amount column currently has no value). Show purchase ID and total amount.
 SELECT pd.purchase, pd.quantity * p.price as total_amount
 from Purchase_Detail pd, Product p
 WHERE pd.product = p.pID
-GROUP by pd.purchase;
 
-—-- e) Find the products that haven’t been purchased since 2023-06-01. Show the product ID and name.
+-- e) Find the products that haven’t been purchased since 2023-06-01. Show the product ID and name.
 SELECT p.pID, p.name
 FROM Purchase pc, Purchase_Detail pcd, Product p
 WHERE pc.purchaseID = pcd.purchase 
 and pcd.product = p.pID
 AND pc.date >= "2023-06-01"
-GROUP By pc.purchaseid;
 
 -- f) Find the total sale of November 2023.
 SELECT SUM(total_amount)
 from (
-  SELECT pcd.quantity * p.price as total
+  SELECT pcd.quantity * p.price as total_amount
   FROM Purchase pc, Purchase_Detail pcd, Product p
   WHERE pc.purchaseID = pcd.purchase
       AND pcd.product = p.pID
